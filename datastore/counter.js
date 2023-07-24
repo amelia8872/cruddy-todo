@@ -11,6 +11,8 @@ var counter = 0;
 // Wikipedia entry on Leading Zeros and check out some of code links:
 // https://www.google.com/search?q=what+is+a+zero+padded+number%3F
 
+
+//  format a number with leading zeros
 const zeroPaddedNumber = (num) => {
   return sprintf('%05d', num);
 };
@@ -38,9 +40,26 @@ const writeCounter = (count, callback) => {
 
 // Public API - Fix this function //////////////////////////////////////////////
 
-exports.getNextUniqueId = () => {
-  counter = counter + 1;
-  return zeroPaddedNumber(counter);
+exports.getNextUniqueId = (callback) => {
+  // read the current counter value from the file
+  readCounter((err, currentCounter) => {
+    if (err) {
+      throw ('Error reading counter');
+      callback(null, 0);
+    }
+
+    // Increment the counter by 1
+    counter = currentCounter + 1;
+
+    //Write the updated counter value to the file
+    writeCounter (counter, (err, counterString) => {
+      if (err) {
+        throw ('error writing counter');
+      }
+      // return the zero-padded counter string
+      callback(null, zeroPaddedNumber(counter));
+    });
+  });
 };
 
 
