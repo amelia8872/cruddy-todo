@@ -30,28 +30,62 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
+  // var data = _.map(items, (text, id) => {
+  //   return { id, text };
+  // });
+  // callback(null, data);
+  var data = [];
+  fs.readdir('./test/testData', (err, files) => {
+    // console.log(files);
+    _.each(files, file => {
+      var id = file.substring(0, 5);
+      // console.log(id);
+      data.push({id, text: id});
+    });
+    callback(null, data);
   });
-  callback(null, data);
 };
 
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+  // var text = items[id];
+  // if (!text) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback(null, { id, text });
+  // }
+  fs.readFile('./test/testData/' + id + '.txt', 'utf8', (err, text) => {
+    if (err) {
+      callback(new Error(`No item with id: ${id}`));
+    } else {
+      // console.log(id);
+      // console.log(text);
+      callback(null, { id, text});
+    }
+  });
 };
 
 exports.update = (id, text, callback) => {
-  var item = items[id];
-  if (!item) {
-    callback(new Error(`No item with id: ${id}`));
+  // var item = items[id];
+  // if (!item) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   items[id] = text;
+  //   callback(null, { id, text });
+  // }
+  var fileName = './test/testData/' + id.toString() + '.txt';
+
+  // The fs.existsSync function is used to check if the file specified by name exists
+  if (fs.existsSync(fileName)) {
+    fs.writeFile(fileName, text, (err) => {
+      if (err) {
+        throw ('cannot update file');
+      } else {
+        callback (null, {id, text});
+      }
+
+    });
   } else {
-    items[id] = text;
-    callback(null, { id, text });
+    callback(new Error(`No item with id: ${id}`));
   }
 };
 
