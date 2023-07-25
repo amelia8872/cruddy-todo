@@ -122,6 +122,7 @@ exports.delete = (id, callback) => {
 
 exports.dataDir = path.join(__dirname, 'data');
 
+
 exports.initialize = () => {
   if (!fs.existsSync(exports.dataDir)) {
     fs.mkdirSync(exports.dataDir);
